@@ -19,7 +19,7 @@ export const voxel_tools = (() => {
     }
 
     InitComponent() {
-      this._RegisterHandler('input.pressed', (m) => this.OnInput_(m));
+      this._RegisterHandler('player.command', (m) => this.OnInput_(m));
       this._RegisterHandler('ui.blockChanged', (m) => this.OnBlockIcon_(m));
       this._RegisterHandler('ui.toolChanged', (m) => this.OnToolChanged_(m));
     }
@@ -142,7 +142,7 @@ export const voxel_tools = (() => {
         return;
       }
 
-      if (msg.value == 'enter') {
+      if (msg.value == 'secondary') {
         this.PerformAction();
       }
     }
@@ -276,7 +276,7 @@ export const voxel_tools = (() => {
     }
 
     InitComponent() {
-      this._RegisterHandler('input.pressed', (m) => this.OnInput_(m));
+      this._RegisterHandler('player.command', (m) => this.OnInput_(m));
       this._RegisterHandler('ui.toolChanged', (m) => this.OnToolChanged_(m));
     }
 
@@ -384,7 +384,7 @@ export const voxel_tools = (() => {
         return;
       }
 
-      if (msg.value == 'enter') {
+      if (msg.value == 'primary') {
         this.PerformAction();
       }
     }

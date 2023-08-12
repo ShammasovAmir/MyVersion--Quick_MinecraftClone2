@@ -38,7 +38,7 @@ export const hack_defs = (() => {
     CAMERA_DECCELERATION: [-10, 0, -10],
     INTRO_RATE: 0.0005,
     WORLD_BLOCK_SIZE: 16,
-    WORLD_SIZE: 24
+    WORLD_SIZE: 12
   };
 
 })();

@@ -23,6 +23,10 @@ export const player_controller = (() => {
         left: false,
         right: false,
       };
+      this.commands = {
+        primaryToolAction: false,
+        secondaryToolAction: false,
+      };
       this.standing = true;
       this.velocity_ = new THREE.Vector3(0, 0, 0);
       this.decceleration_ = new THREE.Vector3(-10, -9.8 * 5, -10);
@@ -52,6 +56,7 @@ export const player_controller = (() => {
       document.addEventListener('keydown', (e) => this.OnKeyDown_(e), false);
       document.addEventListener('keyup', (e) => this.OnKeyUp_(e), false);
       // document.addEventListener('mouseup', (e) => this._onMouseUp(e), false);
+      this.setupMouseActions();
     }
 
     OnKeyDown_(event) {
@@ -121,14 +126,35 @@ export const player_controller = (() => {
         // this.cells_.ChangeActiveTool(-1);
         //   break;
         case 13: // enter
-          this.keys_.enter = true;
+          this.commands.primaryToolAction = true;
           break;
+        case 8: // Backspace
+          this.commands.secondaryToolAction = true;
+          break;
+        case 49: // 1
+          this.onSelectPickAxe();
+          break;
+      }
+      if ( // Number keys 2-9
+        event.keyCode >= 50 // 2
+        && event.keyCode <= 57 // 9
+      ) {
+        this.onSelectBuildTexture(event.keyCode - 50);
       }
     }
 
-    _onMouseUp(event) {
-      this.keys_.enter = true;
+    setupMouseActions() {
+      document.addEventListener('mousedown', (e) => this.onMouseDown(e));
+      // document.addEventListener('mouseup', (e) => this.onMouseUp(e));
     }
+
+    onMouseDown(event) {
+      const command = (event.which === 1) ? 'primaryToolAction' : 'secondaryToolAction';  
+      this.commands[command] = true;
+    }
+
+    // onMouseUp(event) {
+    // }
 
     SetupPointerLock_() {
       const hasPointerLock = (
@@ -210,6 +236,17 @@ export const player_controller = (() => {
       ui.CycleBuildIcon_(dir);
     }
 
+    onSelectBuildTexture(i) {
+      const ui = this.FindEntity('ui').GetComponent('UIController');
+      ui.setBuildTool();
+      ui.setBuildIconByIndex(i);
+    }
+
+    onSelectPickAxe() {
+      const ui = this.FindEntity('ui').GetComponent('UIController');
+      ui.setBreakTool();
+    }
+
     Update(timeInSeconds) {
       const controlObject = this.controls_.getObject();
 
@@ -223,11 +260,17 @@ export const player_controller = (() => {
         return;
       }
 
-      if (this.keys_.enter) {
-        this.Broadcast({topic: 'input.pressed', value: 'enter'});
+      // console.log(this.commands);
+      if (this.commands.primaryToolAction) {
+        this.Broadcast({ topic: 'player.command', value: 'primary' });
+      } else if (this.commands.secondaryToolAction) {
+        this.Broadcast({ topic: 'player.command', value: 'secondary' });
       }
 
+      this.commands.primaryToolAction = false;
+      this.commands.secondaryToolAction = false;
       this.keys_.enter = false;
+      this.keys_.backspace = false;
 
       const velocity = this.velocity_;
       const frameDecceleration = new THREE.Vector3(

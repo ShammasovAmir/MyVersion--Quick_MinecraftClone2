@@ -48,16 +48,31 @@ export const ui_controller = (() => {
     }
 
     CycleBuildIcon_(dir) {
-      this.icons_[this.iconIndex_].classList.remove('highlight');
-      this.iconIndex_ = (this.iconIndex_ + this.icons_.length + dir) % this.icons_.length;
-      this.icons_[this.iconIndex_].classList.toggle('highlight');
+      this.setBuildIconByIndex(this.iconIndex_ + this.icons_.length + dir);
+    }
 
+    setBuildIconByIndex(i) {
+      this.icons_[this.iconIndex_].classList.remove('highlight');
+      this.iconIndex_ = i % this.icons_.length;
+      this.icons_[this.iconIndex_].classList.toggle('highlight');
       this.UpdateToolBlockType_();
     }
 
     CycleTool_() {
-      this.toolIndex_ = (this.toolIndex_ + 1) % this.toolTypes_.length;
+      this.setToolByIndex(this.toolIndex_ + 1);
+    }
+
+    setToolByIndex(i) {
+      this.toolIndex_ = i % this.toolTypes_.length;
       this.UpdateToolType_();
+    }
+
+    setBuildTool() {
+      this.setToolByIndex(0); // hard-coded
+    }
+
+    setBreakTool() {
+      this.setToolByIndex(1); // hard-coded
     }
 
     UpdateToolBlockType_() {
